@@ -1,5 +1,8 @@
 package com.hackaton.producs.generativeia.entities;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,6 +14,7 @@ import lombok.Data;
 public class Producto {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @JsonInclude(Include.NON_NULL)
     private Integer id;
     private String nombre;
     private String descripcion;

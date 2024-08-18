@@ -8,7 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hackaton.producs.generativeia.dto.ProductosIA;
 import com.hackaton.producs.generativeia.dto.ResponseProducts;
 import com.hackaton.producs.generativeia.entities.Producto;
 import com.hackaton.producs.generativeia.feign.client.OpenIAFeignClient;
@@ -19,7 +18,7 @@ import com.hackaton.producs.generativeia.repositories.ProductoRepository;
 @Service
 public class ProductoService {
 
-    private final static String PROMP_SEARCH_PRODUCTS = "Busca similitudes en mexico y retorna los datos, nombre,descripcion,precio,marca,codigoSAT,unidadSAT en México del producto: ";
+    private final static String PROMP_SEARCH_PRODUCTS = "Busca similitudes en mexico y retorna los datos, nombre,descripcion,precio en double,marca,codigoSAT,unidadSAT lista minimo 5 en México del producto: ";
 
     private ProductoRepository productoRepository;
     private OpenIAFeignClient openIAFeignClient;
@@ -43,7 +42,7 @@ public class ProductoService {
         return this.productoRepository.findById(id).orElseThrow();
     }
 
-    public List<ProductosIA> buscarProductosByIA(String producto) {
+    public List<Producto> buscarProductosByIA(String producto) {
         ResponseOpen responseOpen = this.openIAFeignClient
                 .askChatGPT(SendMessage.builSendMessage(PROMP_SEARCH_PRODUCTS.concat(" " + producto)));
 
@@ -53,7 +52,7 @@ public class ProductoService {
         return convertTResponseProducts(productosJson);
     }
 
-    public List<ProductosIA> convertTResponseProducts(String json){
+    public List<Producto> convertTResponseProducts(String json){
         try {
 
             System.out.println(json);

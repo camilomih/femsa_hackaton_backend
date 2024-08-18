@@ -5,15 +5,18 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hackaton.producs.generativeia.dto.ProductsPlusSugets;
 import com.hackaton.producs.generativeia.dto.ResponseProducts;
 import com.hackaton.producs.generativeia.entities.Producto;
 import com.hackaton.producs.generativeia.feign.client.OpenIAFeignClient;
 import com.hackaton.producs.generativeia.feign.dtos.ResponseOpen;
 import com.hackaton.producs.generativeia.feign.dtos.SendMessage;
 import com.hackaton.producs.generativeia.repositories.ProductoRepository;
+import com.hackaton.producs.generativeia.specifications.ProductSpecification;
 
 @Service
 public class ProductoService {
@@ -32,10 +35,16 @@ public class ProductoService {
         return this.productoRepository.save(producto);
     }
 
-    public Page<Producto> listarProductos(int initPage) {
+    public ProductsPlusSugets listarProductos(int initPage, String nombre) {
+        ProductsPlusSugets response = new ProductsPlusSugets();
         Pageable page = PageRequest.of(initPage, 10);
-
-        return this.productoRepository.findAll(page);
+        if (nombre == null) {
+            response.setProductos(productoRepository.findAll(page));
+            return response;
+        }
+        response.setProductos(productoRepository.findAll(ProductSpecification.nameLike(nombre), page));
+        response.setSugerenciasIA(buscarProductosByIA(nombre));
+        return response;
     }
 
     public Producto buscarProductoPorId(Integer id) {
@@ -46,22 +55,33 @@ public class ProductoService {
         ResponseOpen responseOpen = this.openIAFeignClient
                 .askChatGPT(SendMessage.builSendMessage(PROMP_SEARCH_PRODUCTS.concat(" " + producto)));
 
-        
         String productosJson = responseOpen.getChoices().get(0).getMessage().getContent();
 
         return convertTResponseProducts(productosJson);
     }
 
-    public List<Producto> convertTResponseProducts(String json){
+    public List<Producto> convertTResponseProducts(String json) {
         try {
 
             System.out.println(json);
             ObjectMapper objectMapper = new ObjectMapper();
             ResponseProducts responseProducts = objectMapper.readValue(json, ResponseProducts.class);
 
-            return responseProducts.getProductos();
+            List<Producto> productos = responseProducts.getProductos();
+
+            productos = productos.stream().map(producto -> {
+                producto.setGeneratedByIa(true);
+                return producto;
+            }).toList();
+
+            return productos;
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public List<Producto> crearVariosProductos(List<Producto> productos) {
+        List<Producto> productosGuardados = productoRepository.saveAll(productos);
+        return productosGuardados;
     }
 }

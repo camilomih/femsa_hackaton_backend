@@ -9,9 +9,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hackaton.producs.generativeia.dto.ProductsPlusSugets;
 import com.hackaton.producs.generativeia.dto.PromptProducto;
+import com.hackaton.producs.generativeia.dto.SaveProductos;
 import com.hackaton.producs.generativeia.entities.Producto;
 import com.hackaton.producs.generativeia.services.ProductoService;
 
@@ -36,12 +39,17 @@ public class ProductoController {
     }
 
     @GetMapping("/listar/{pagina}")
-    public ResponseEntity<Page<Producto>> listarProductos(@PathVariable("pagina") Integer pagina) {
-        return ResponseEntity.ok(productoService.listarProductos(pagina));
+    public ResponseEntity<ProductsPlusSugets> listarProductos(@PathVariable("pagina") Integer pagina, @RequestParam(required = false, name = "buscarProducto") String buscarProducto) {
+        return ResponseEntity.ok(productoService.listarProductos(pagina, buscarProducto));
     }
 
     @PostMapping("/buscar-ia")
     public ResponseEntity<List<Producto>> buscarMedianteIA(@RequestBody PromptProducto producto) {
         return ResponseEntity.ok(productoService.buscarProductosByIA(producto.getProductoNombre()));
+    }
+
+    @PostMapping("/crear-varios")
+    public ResponseEntity<List<Producto>> crearVariosProductos(@RequestBody SaveProductos productos) {
+        return ResponseEntity.ok(productoService.crearVariosProductos(productos.getProductos()));
     }
 }

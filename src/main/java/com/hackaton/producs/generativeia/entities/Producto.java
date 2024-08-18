@@ -7,6 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Transient;
 import lombok.Data;
 
 @Data
@@ -22,5 +23,8 @@ public class Producto {
     private String marca;
     private String codigoSAT;
     private String unidadSAT;
+
+    @Transient
+    private Boolean generatedByIa = false;
 
 }

@@ -1,7 +1,8 @@
 package com.hackaton.producs.generativeia.services;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.hackaton.producs.generativeia.entities.Producto;
@@ -20,8 +21,10 @@ public class ProductoService {
         return this.productoRepository.save(producto);
     }
 
-    public List<Producto> listarProductos() {
-        return this.productoRepository.findAll();
+    public Page<Producto> listarProductos(int initPage) {
+        Pageable page = PageRequest.of(initPage, 10); 
+        
+        return this.productoRepository.findAll(page);
     }
 
     public Producto buscarProductoPorId(Integer id) {

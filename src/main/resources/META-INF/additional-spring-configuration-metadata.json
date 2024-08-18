@@ -1,0 +1,12 @@
+{"properties": [
+  {
+    "name": "openia.url",
+    "type": "java.lang.String",
+    "description": "Url del api de openia usada por el cliente de feign 'openia.url'"
+  },
+  {
+    "name": "openia.key",
+    "type": "java.lang.String",
+    "description": "Clave secreta para ejecutar los servicios de feign 'openia.key'"
+  }
+]}

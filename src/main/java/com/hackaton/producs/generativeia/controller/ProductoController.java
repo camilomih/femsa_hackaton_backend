@@ -1,7 +1,6 @@
 package com.hackaton.producs.generativeia.controller;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,8 +32,8 @@ public class ProductoController {
         return ResponseEntity.ok(productoService.buscarProductoPorId(id));
     }
 
-    @GetMapping("/listar")
-    public ResponseEntity<List<Producto>> listarProductos() {
-        return ResponseEntity.ok(productoService.listarProductos());
+    @GetMapping("/listar/{pagina}")
+    public ResponseEntity<Page<Producto>> listarProductos(@PathVariable("pagina") Integer pagina) {
+        return ResponseEntity.ok(productoService.listarProductos(pagina));
     }
 }

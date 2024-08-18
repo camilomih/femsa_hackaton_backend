@@ -1,5 +1,7 @@
 package com.hackaton.producs.generativeia.controller;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,7 +11,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hackaton.producs.generativeia.dto.ProductosIA;
+import com.hackaton.producs.generativeia.dto.PromptProducto;
 import com.hackaton.producs.generativeia.entities.Producto;
+import com.hackaton.producs.generativeia.feign.dtos.ResponseOpen;
 import com.hackaton.producs.generativeia.services.ProductoService;
 
 @RestController
@@ -35,5 +40,10 @@ public class ProductoController {
     @GetMapping("/listar/{pagina}")
     public ResponseEntity<Page<Producto>> listarProductos(@PathVariable("pagina") Integer pagina) {
         return ResponseEntity.ok(productoService.listarProductos(pagina));
+    }
+
+    @PostMapping("/buscar-ia")
+    public ResponseEntity<List<ProductosIA>> buscarMedianteIA(@RequestBody PromptProducto producto) {
+        return ResponseEntity.ok(productoService.buscarProductosByIA(producto.getProductoNombre()));
     }
 }

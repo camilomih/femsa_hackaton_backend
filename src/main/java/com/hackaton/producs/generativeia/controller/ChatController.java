@@ -24,9 +24,8 @@ public class ChatController {
     @PostMapping(value = "/test")
     public ResponseEntity<ResponseOpen> test() throws Exception {
         try {
-            Message message = new Message();
-            message.setContent("Prueba responde con un hola mundo!");
-            message.setRole("user");
+            Message message = Message.builder().content("Prueba responde con un hola mundo!").role("user").build();
+        
             SendMessage requestChat = SendMessage.builder().model(SendMessage.GPT_TURBO).messages(List.of(message))
                     .temperature(0.7).build();
             ResponseOpen responseOpen = this.openIAFeignClient.askChatGPT(requestChat);

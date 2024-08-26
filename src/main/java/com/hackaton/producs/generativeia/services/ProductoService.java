@@ -32,6 +32,7 @@ public class ProductoService {
     }
 
     public Producto crearProducto(Producto producto) {
+        producto.setGeneratedByIa(false);
         return this.productoRepository.save(producto);
     }
 
